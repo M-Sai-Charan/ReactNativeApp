@@ -6,4 +6,5 @@ export type RootStackParamList = {
   Team: { eventId: string };
   Invoice: { eventId: string };
   Feedback: { eventId: string };
+  Gallery:undefined
 };

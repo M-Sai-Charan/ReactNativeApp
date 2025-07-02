@@ -87,8 +87,6 @@ const FeedbackScreen = ({ route }: any) => {
           {/* Glassmorphism Card */}
           <Animatable.View animation="fadeInUp" delay={100} style={styles.cardWrapper}>
             <BlurView intensity={50} tint="dark" style={styles.blurCard}>
-              <Text style={styles.eventId}>📝 Event ID: {eventId}</Text>
-
               <Text style={styles.label}>Rate your experience</Text>
               {renderStars()}
 

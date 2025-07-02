@@ -17,44 +17,117 @@ import { Ionicons } from '@expo/vector-icons';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const customer = {
-  name: 'Rahul Sharma',
-  phone: '+91-9876543210',
-  email: 'rahul.wedding@gmail.com',
-  events: [
+  "name": "Rahul Sharma",
+  "phone": "+91-9876543210",
+  "email": "rahul.wedding@gmail.com",
+  "bride": "sam",
+  "groom": "rahul",
+  "olpId": "001OLP2025",
+  "events": [
     {
-      id: 'e1',
-      type: 'Haldi',
-      date: '2025-07-13',
-      time: '10:00 AM',
-      location: 'Sharma Residence, Jaipur',
-      guests: 75,
-      invoice: { amount: 12000, paid: true },
-      team: 3,
-      status: 'Upcoming',
+      "id": "e1",
+      "type": "Haldi",
+      "date": "2025-07-13",
+      "time": "10:00 AM",
+      "location": "Sharma Residence, Jaipur",
+      "guests": 75,
+      "invoice": {
+        "amount": 12000,
+        "paid": true
+      },
+      "team": 5,
+      "status": "Upcoming",
+      "eventTeams": [
+        {
+          "id": 1,
+          "name": "Steve",
+          "value": "photographer"
+        },
+        {
+          "id": 5,
+          "name": "Smith",
+          "value": "editor"
+        },
+        {
+          "id": 9,
+          "name": "Ferguson",
+          "value": "lightman"
+        },
+        {
+          "id": 13,
+          "name": "Archer",
+          "value": "droneoperator"
+        },
+        {
+          "id": 18,
+          "name": "Charlie",
+          "value": "videographer"
+        }
+      ]
     },
     {
-      id: 'e2',
-      type: 'Sangeet',
-      date: '2025-07-14',
-      time: '07:00 PM',
-      location: 'Royal Banquet, Jaipur',
-      guests: 120,
-      invoice: { amount: 25000, paid: false },
-      team: 4,
-      status: 'Upcoming',
+      "id": "e2",
+      "type": "Sangeet",
+      "date": "2025-07-14",
+      "time": "07:00 PM",
+      "location": "Royal Banquet, Jaipur",
+      "guests": 120,
+      "invoice": {
+        "amount": 25000,
+        "paid": false
+      },
+      "team": 4,
+      "status": "Upcoming",
+      "eventTeams": [
+        {
+          "id": 1,
+          "name": "Steve",
+          "value": "photographer"
+        },
+        {
+          "id": 9,
+          "name": "Ferguson",
+          "value": "lightman"
+        },
+        {
+          "id": 13,
+          "name": "Archer",
+          "value": "droneoperator"
+        },
+        {
+          "id": 18,
+          "name": "Charlie",
+          "value": "videographer"
+        }
+      ]
     },
     {
-      id: 'e3',
-      type: 'Reception',
-      date: '2025-07-16',
-      time: '08:00 PM',
-      location: 'The Grand Palace, Jaipur',
-      guests: 200,
-      invoice: { amount: 30000, paid: false },
-      team: 5,
-      status: 'Upcoming',
-    },
-  ],
+      "id": "e3",
+      "type": "Reception",
+      "date": "2025-07-16",
+      "time": "08:00 PM",
+      "location": "The Grand Palace, Jaipur",
+      "guests": 200,
+      "invoice": {
+        "amount": 30000,
+        "paid": false
+      },
+      "team": 2,
+      "status": "Upcoming",
+      "eventTeams": [
+        {
+          "id": 1,
+          "name": "Steve",
+          "value": "photographer"
+        },
+        {
+          "id": 9,
+          "name": "Ferguson",
+          "value": "lightman"
+        }
+      ]
+    }
+  ]
 };
 
 const DashboardScreen = () => {
