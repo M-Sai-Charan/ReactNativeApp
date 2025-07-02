@@ -9,6 +9,10 @@ import {
   StyleSheet,
   Animated,
   Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import { useEffect, useRef, useState } from 'react';
 import Feather from 'react-native-vector-icons/Feather';
@@ -17,6 +21,7 @@ import Toast from 'react-native-toast-message';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/RootStackParamList';
+import logoImage from '../assets/olp-logo.png';
 
 const { width } = Dimensions.get('window');
 
@@ -63,92 +68,104 @@ export default function LoginScreen() {
         text1: 'Login successful!',
         text2: `Welcome, ${email.split('@')[0]}`,
       });
-      navigation.replace('Dashboard');
+     navigation.replace('MainTabs');
     }, 1200);
   };
 
   return (
-    <View style={styles.container}>
-      {/* Logo Section */}
-      <Animated.View style={[styles.logoWrapper, {
-        opacity: logoAnim,
-        transform: [
-          {
-            scale: logoAnim.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0.85, 1],
-            }),
-          },
-        ],
-      }]}>
-        <Image
-          source={{
-            uri: 'https://images.unsplash.com/photo-1640959473355-d44e69cf809b?w=600',
-          }}
-          style={styles.logoImage}
-        />
-        <Text style={styles.logoText}>One Look Photography</Text>
-      </Animated.View>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
+          {/* Logo Section */}
+          <Animated.View
+            style={[
+              styles.logoWrapper,
+              {
+                opacity: logoAnim,
+                transform: [
+                  {
+                    scale: logoAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0.85, 1],
+                    }),
+                  },
+                ],
+              },
+            ]}
+          >
+            <Image source={logoImage} style={styles.logoImage} />
+            <Text style={styles.logoText}>One Look Photography</Text>
+          </Animated.View>
 
-      {/* Login Form */}
-      <Animated.View style={[styles.formWrapper, { transform: [{ translateY: slideAnim }] }]}>
-        <TextInput
-          placeholder="Email"
-          placeholderTextColor="#aaa"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-        />
+          {/* Login Form */}
+          <Animated.View
+            style={[styles.formWrapper, { transform: [{ translateY: slideAnim }] }]}
+          >
+            <TextInput
+              placeholder="Email"
+              placeholderTextColor="#aaa"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              style={styles.input}
+              value={email}
+              onChangeText={setEmail}
+            />
 
-        <View style={styles.passwordWrapper}>
-          <TextInput
-            placeholder="Password"
-            placeholderTextColor="#aaa"
-            secureTextEntry={!showPassword}
-            autoCapitalize="none"
-            style={[styles.input, { flex: 1, borderWidth: 0 }]}
-            value={password}
-            onChangeText={setPassword}
-          />
-          <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
-            <Feather name={showPassword ? 'eye-off' : 'eye'} size={20} color="#aaa" />
-          </TouchableOpacity>
-        </View>
+            <View style={{ position: 'relative' }}>
+              <TextInput
+                placeholder="Password"
+                placeholderTextColor="#aaa"
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+                style={styles.input}
+                value={password}
+                onChangeText={setPassword}
+              />
+              <TouchableOpacity
+                onPress={() => setShowPassword(!showPassword)}
+                style={styles.eyeIconOverlay}
+              >
+                <Feather name={showPassword ? 'eye-off' : 'eye'} size={20} color="#aaa" />
+              </TouchableOpacity>
+            </View>
 
-        <TouchableOpacity
-          onPress={handleLogin}
-          disabled={loading}
-          style={styles.loginButton}
-        >
-          {loading ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <Text style={styles.loginButtonText}>Sign In</Text>
+            <TouchableOpacity
+              onPress={handleLogin}
+              disabled={loading}
+              style={styles.loginButton}
+            >
+              {loading ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <Text style={styles.loginButtonText}>Sign In</Text>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => Linking.openURL('https://your-contact-page.com')}
+            >
+              <Text style={styles.helpText}>Need help signing in? Contact us</Text>
+            </TouchableOpacity>
+          </Animated.View>
+
+          {/* Confetti */}
+          {showConfetti && (
+            <ConfettiCannon
+              count={80}
+              origin={{ x: width / 2, y: 0 }}
+              fadeOut
+              autoStart
+              explosionSpeed={300}
+            />
           )}
-        </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => Linking.openURL('https://your-contact-page.com')}>
-          <Text style={styles.helpText}>
-            Need help signing in? Contact us
-          </Text>
-        </TouchableOpacity>
-      </Animated.View>
-
-      {/* Confetti */}
-      {showConfetti && (
-        <ConfettiCannon
-          count={80}
-          origin={{ x: width / 2, y: 0 }}
-          fadeOut
-          autoStart
-          explosionSpeed={300}
-        />
-      )}
-
-      <Toast position="bottom" />
-    </View>
+          <Toast position="bottom" />
+        </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -168,8 +185,6 @@ const styles = StyleSheet.create({
   logoImage: {
     width: 96,
     height: 96,
-    borderRadius: 48,
-    borderWidth: 2,
     borderColor: '#333',
   },
   logoText: {
@@ -199,18 +214,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginBottom: 16,
   },
-  passwordWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#1a1a1a',
-    borderColor: '#333',
-    borderWidth: 1,
-    borderRadius: 12,
-    marginBottom: 16,
-  },
-  eyeIcon: {
-    paddingHorizontal: 12,
-  },
   loginButton: {
     backgroundColor: '#7e5bef',
     borderRadius: 12,
@@ -230,5 +233,12 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginTop: 4,
     opacity: 0.8,
+  },
+  eyeIconOverlay: {
+    position: 'absolute',
+    right: 10,
+    top: '38%',
+    transform: [{ translateY: -10 }],
+    zIndex: 1,
   },
 });

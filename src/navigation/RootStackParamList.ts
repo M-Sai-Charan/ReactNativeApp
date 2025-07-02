@@ -1,5 +1,9 @@
+// src/navigation/RootStackParamList.ts
 export type RootStackParamList = {
   Login: undefined;
-  Dashboard: undefined;
-  EventDetails: { eventId: string }; // You can change eventId type as needed
+  MainTabs: undefined;
+  EventDetails: { eventId: string };
+  Team: { eventId: string };
+  Invoice: { eventId: string };
+  Feedback: { eventId: string };
 };
