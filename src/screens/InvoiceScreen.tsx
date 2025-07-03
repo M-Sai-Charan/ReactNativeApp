@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -23,38 +23,24 @@ import { Asset } from 'expo-asset';
 const InvoiceScreen = ({ route }: any) => {
   const { eventId } = route.params;
   const navigation = useNavigation();
+  const [event, setEvent] = useState<any>(null);
 
-  const invoiceList = [
-    {
-      id: 'INV001',
-      eventType: 'Haldi',
-      date: '2025-07-13',
-      amount: 12000,
-      status: 'Paid',
-      paidOn: '2025-07-05',
-      mode: 'UPI',
-    },
-    {
-      id: 'INV002',
-      eventType: 'Sangeet',
-      date: '2025-07-14',
-      amount: 25000,
-      status: 'Unpaid',
-      paidOn: null,
-      mode: null,
-    },
-    {
-      id: 'INV003',
-      eventType: 'Reception',
-      date: '2025-07-16',
-      amount: 30000,
-      status: 'Unpaid',
-      paidOn: null,
-      mode: null,
-    },
-  ];
+  useEffect(() => {
+    fetch('https://mocki.io/v1/f61267e5-512d-4feb-a3ea-96401ebf5d04')
+      .then(res => res.json())
+      .then(data => {
+        const foundEvent = data.events.find((e: any) => e.id === eventId);
+        setEvent(foundEvent);
+      })
+      .catch(error => {
+        console.error('Error fetching invoice:', error);
+        Alert.alert('Error', 'Unable to load invoice.');
+      });
+  }, [eventId]);
 
-  const handleDownload = async (id: string, item: any) => {
+  const handleDownload = async () => {
+    if (!event) return;
+
     try {
       const asset = Asset.fromModule(require('../assets/olp-logo.png'));
       await asset.downloadAsync();
@@ -63,51 +49,30 @@ const InvoiceScreen = ({ route }: any) => {
         encoding: FileSystem.EncodingType.Base64,
       });
 
-      const htmlContent = `
+      const html = `
         <html>
-          <head>
-            <style>
-              body { font-family: Arial; padding: 20px; color: #222; }
-              .header { text-align: center; margin-bottom: 20px; }
-              .logo { width: 80px; height: 80px; border-radius: 40px; margin-bottom: 10px; }
-              .section { margin-bottom: 10px; }
-              .label { font-weight: bold; color: #7e5bef; }
-              .value { margin-left: 6px; }
-              .footer { margin-top: 30px; text-align: center; color: #888; font-size: 12px; }
-            </style>
-          </head>
-          <body>
-            <div class="header">
-              <img class="logo" src="data:image/png;base64,${logoBase64}" />
-              <h2>One Look Photography</h2>
-              <p><strong>Invoice ID:</strong> ${id}</p>
-            </div>
-
-            <div class="section"><span class="label">Event:</span><span class="value">${item.eventType}</span></div>
-            <div class="section"><span class="label">Date:</span><span class="value">${item.date}</span></div>
-            <div class="section"><span class="label">Amount:</span><span class="value">₹${item.amount.toLocaleString()}</span></div>
-            <div class="section"><span class="label">Status:</span><span class="value">${item.status}</span></div>
-            ${item.status === 'Paid'
-          ? `<div class="section"><span class="label">Paid On:</span><span class="value">${item.paidOn}</span></div>
-                   <div class="section"><span class="label">Mode:</span><span class="value">${item.mode}</span></div>`
-          : ''
-        }
-
-            <div class="footer">
-              Thank you for choosing One Look Photography. <br/>
-              This is a system-generated invoice.
-            </div>
+          <body style="font-family: Arial; padding: 20px;">
+            <img src="data:image/png;base64,${logoBase64}" style="width: 80px; height: 80px; border-radius: 40px;" />
+            <h2>One Look Photography - Invoice</h2>
+            <p><strong>Event:</strong> ${event.type}</p>
+            <p><strong>Date:</strong> ${event.date}</p>
+            <p><strong>Amount:</strong> ₹${event.invoice.amount}</p>
+            <p><strong>Status:</strong> ${event.invoice.paid ? 'Paid' : 'Unpaid'}</p>
+            ${event.invoice.paid ? '<p><strong>Mode:</strong> UPI</p><p><strong>Paid On:</strong> 2025-07-05</p>' : ''}
+            <p style="margin-top:40px;font-size:12px;color:#666">Thank you for your business!</p>
           </body>
         </html>
       `;
 
-      const { uri } = await Print.printToFileAsync({ html: htmlContent });
+      const { uri } = await Print.printToFileAsync({ html });
       await Sharing.shareAsync(uri);
-    } catch (error) {
-      console.error('Invoice Download Error:', error);
-      Alert.alert('Error', 'Failed to generate invoice.');
+    } catch (e) {
+      console.log(e);
+      Alert.alert('Error', 'Download failed.');
     }
   };
+
+  if (!event) return null;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -115,68 +80,43 @@ const InvoiceScreen = ({ route }: any) => {
 
       <View style={styles.headerWrapper}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 4 }}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={26} color="#7dcfff" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>💼 Your Invoices</Text>
+          <Text style={styles.headerTitle}>Invoice - {event.type}</Text>
           <View style={{ width: 26 }} />
         </View>
       </View>
 
-      <FlatList
-        data={invoiceList}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ paddingBottom: 40 }}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item, index }) => (
-          <Animatable.View
-            animation="fadeInUp"
-            delay={index * 100}
-            style={[
-              styles.card,
-              item.status === 'Paid' && styles.cardPaidGlow,
-              item.status === 'Unpaid' && styles.cardUnPaidGlow,
-            ]}
-          >
-            <View style={styles.cardTop}>
-              <Text style={styles.eventType}>🎉 {item.eventType}</Text>
-              <Text
-                style={[
-                  styles.status,
-                  { color: item.status === 'Paid' ? '#00e676' : '#ff7043' },
-                ]}
-              >
-                {item.status}
-              </Text>
-            </View>
-            <Text style={styles.text}>📅 {item.date}</Text>
-            <Text style={styles.text}>🧾 Invoice ID: {item.id}</Text>
-            <Text style={styles.text}>💸 Amount: ₹{item.amount.toLocaleString()}</Text>
-            {item.status === 'Paid' && (
-              <>
-                <Text style={styles.text}>✅ Paid On: {item.paidOn}</Text>
-                <Text style={styles.text}>💳 Mode: {item.mode}</Text>
-                <TouchableOpacity onPress={() => handleDownload(item.id, item)}>
-                  <LinearGradient
-                    colors={['#7e5bef', '#55c4f5']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={styles.downloadBtn}
-                  >
-                    <MaterialIcons name="file-download" color="#fff" size={20} />
-                    <Text style={styles.downloadText}>Download Invoice</Text>
-                  </LinearGradient>
-                </TouchableOpacity>
-              </>
-            )}
-          </Animatable.View>
+      <Animatable.View animation="fadeInUp" delay={100} style={styles.card}>
+        <Text style={styles.label}>📅 Date: <Text style={styles.value}>{event.date}</Text></Text>
+        <Text style={styles.label}>📍 Location: <Text style={styles.value}>{event.location}</Text></Text>
+        <Text style={styles.label}>💸 Amount: <Text style={styles.value}>₹{event.invoice.amount}</Text></Text>
+        <Text style={styles.label}>
+          ✅ Status: <Text style={{ color: event.invoice.paid ? '#00e676' : '#ff5252' }}>{event.invoice.paid ? 'Paid' : 'Unpaid'}</Text>
+        </Text>
+        {event.invoice.paid && (
+          <>
+            <Text style={styles.label}>💳 Mode: <Text style={styles.value}>UPI</Text></Text>
+            <Text style={styles.label}>📆 Paid On: <Text style={styles.value}>2025-07-05</Text></Text>
+          </>
         )}
-      />
+
+        {event.invoice.paid && (
+          <TouchableOpacity onPress={handleDownload}>
+            <LinearGradient colors={['#7e5bef', '#55c4f5']} style={styles.downloadBtn}>
+              <MaterialIcons name="file-download" color="#fff" size={20} />
+              <Text style={styles.downloadText}>Download Invoice</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        )}
+      </Animatable.View>
     </SafeAreaView>
   );
 };
 
 export default InvoiceScreen;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -187,8 +127,6 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     paddingHorizontal: 16,
     backgroundColor: '#111',
-    borderBottomWidth: 1,
-    borderColor: '#222',
   },
   header: {
     flexDirection: 'row',
@@ -196,77 +134,40 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 18,
+    fontWeight: '600',
     color: '#fff',
-    marginLeft: 4,
-  },
-  subheading: {
-    fontSize: 14,
-    color: '#888',
-    marginTop: 8,
   },
   card: {
     backgroundColor: '#181818',
-    borderRadius: 20,
-    padding: 18,
-    marginHorizontal: 16,
-    marginBottom: 18,
-    borderWidth: 1,
-    borderColor: '#2c2c2c',
+    borderRadius: 16,
+    padding: 20,
+    margin: 16,
     shadowColor: '#000',
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
   },
-  cardPaidGlow: {
-    borderColor: '#00e676',
-    shadowColor: '#00e676',
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
+  label: {
+    color: '#aaa',
+    fontSize: 14,
+    marginBottom: 8,
   },
-  cardUnPaidGlow: {
-    borderColor: '#ff7043',
-    shadowColor: '#ff7043',
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-  },
-  cardTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  eventType: {
-    fontSize: 16,
-    fontWeight: 'bold',
+  value: {
     color: '#fff',
-  },
-  status: {
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  text: {
-    fontSize: 14,
-    color: '#ccc',
-    marginTop: 6,
+    fontWeight: '600',
   },
   downloadBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 16,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 12,
+    padding: 10,
+    marginTop: 20,
+    borderRadius: 10,
     alignSelf: 'flex-start',
-    shadowColor: '#7e5bef',
-    shadowOpacity: 0.6,
-    shadowOffset: { width: 0, height: 3 },
-    shadowRadius: 6,
   },
   downloadText: {
     color: '#fff',
-    fontWeight: '600',
     fontSize: 14,
+    fontWeight: '600',
     marginLeft: 10,
   },
 });
