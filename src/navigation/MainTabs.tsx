@@ -1,8 +1,7 @@
-// src/navigation/MainTabs.tsx
+
 import React, { useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import DashboardScreen from '../screens/DashboardScreen';
-import EventDetailsScreen from '../screens/EventDetailsScreen';
 import GalleryScreen from '../screens/GalleryScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Animated, {
@@ -24,7 +23,7 @@ const MainTabs = () => {
           position: 'absolute',
           left: 16,
           right: 16,
-          bottom: 16,
+          bottom: 0,
           borderRadius: 50,
           backgroundColor: '#fff',
           height: 70,
