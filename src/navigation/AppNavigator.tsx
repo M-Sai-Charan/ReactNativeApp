@@ -3,7 +3,6 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import LoginScreen from '../screens/LoginScreen';
-import EventDetailsScreen from '../screens/EventDetailsScreen';
 import TeamScreen from '../screens/TeamScreen';
 import InvoiceScreen from '../screens/InvoiceScreen';
 import FeedbackScreen from '../screens/FeedbackScreen';
@@ -18,7 +17,6 @@ export default function AppNavigator() {
       <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="MainTabs" component={MainTabs} />
-        <Stack.Screen name="EventDetails" component={EventDetailsScreen} />
         <Stack.Screen name="Team" component={TeamScreen} />
         <Stack.Screen name="Invoice" component={InvoiceScreen} />
         <Stack.Screen name="Feedback" component={FeedbackScreen} />

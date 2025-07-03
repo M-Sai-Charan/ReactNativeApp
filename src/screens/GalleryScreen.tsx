@@ -50,10 +50,10 @@ const GalleryScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>📸 Wedding Gallery</Text>
+      <Text style={styles.title}>📸 Gallery</Text>
 
       {/* Filter Buttons */}
-      {/* <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRow}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRow}>
         {allEventTypes.map((eventType) => (
           <TouchableOpacity
             key={eventType}
@@ -73,7 +73,7 @@ const GalleryScreen = () => {
             </Text>
           </TouchableOpacity>
         ))}
-      </ScrollView> */}
+      </ScrollView>
 
       {/* Event Grid Blocks */}
       <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#121212',
-    paddingTop: 48,
+    paddingTop: 58,
     paddingHorizontal: 16,
   },
   title: {
@@ -159,9 +159,10 @@ const styles = StyleSheet.create({
     marginRight: 10,
     minWidth: 80,
     alignItems: 'center',
+    height:40
   },
   filterButtonActive: {
-    backgroundColor: '#007aff',
+    backgroundColor: '#7e5bef',
   },
   filterText: {
     color: '#bbb',

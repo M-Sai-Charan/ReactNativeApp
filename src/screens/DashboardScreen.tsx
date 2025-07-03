@@ -13,6 +13,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/RootStackParamList';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { Linking } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -173,7 +174,7 @@ const DashboardScreen = () => {
           <View key={event.id} style={styles.eventCard}>
             <View style={styles.eventHeader}>
               <Text style={styles.eventType}>🎉 {event.type}</Text>
-              {/* <Text style={styles.statusTag}>{event.status}</Text> */}
+              <Text style={styles.statusTag}>{event.status}</Text>
             </View>
             <Text style={styles.eventText}>📍 {event.location}</Text>
             <Text style={styles.eventText}>
@@ -197,6 +198,15 @@ const DashboardScreen = () => {
               <ActionButton label="Team" onPress={() => navigation.navigate('Team', { eventId: event.id })} />
               <ActionButton label="Invoice" onPress={() => navigation.navigate('Invoice', { eventId: event.id })} />
               <ActionButton label="Feedback" onPress={() => navigation.navigate('Feedback', { eventId: event.id })} />
+              <TouchableOpacity
+                style={styles.iconButton}
+                onPress={() =>
+                  Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}`)
+                }
+              >
+                <Ionicons name="location-sharp" size={20} color="#fff" />
+              </TouchableOpacity>
+
             </View>
           </View>
         ))}
@@ -226,6 +236,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 16,
+    backgroundColor: '#000', // darker placeholder
   },
   welcomeSection: {
     marginTop: 45,
@@ -240,11 +251,11 @@ const styles = StyleSheet.create({
     width: 54,
     height: 54,
     borderRadius: 27,
-    backgroundColor: '#555',
+    backgroundColor: '#444', // darker placeholder
   },
   welcomeHeading: {
     fontSize: 16,
-    color: '#ccc',
+    color: '#aaa',
   },
   customerName: {
     fontSize: 24,
@@ -258,7 +269,7 @@ const styles = StyleSheet.create({
     color: '#bbb',
   },
   card: {
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    backgroundColor: '#1f1f1f',
     borderRadius: 16,
     padding: 18,
     marginBottom: 24,
@@ -270,12 +281,12 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#90caf9',
+    color: '#b39ddb', // light purple
     marginBottom: 10,
   },
   infoText: {
     fontSize: 14,
-    color: '#eee',
+    color: '#ddd',
     marginBottom: 4,
   },
   sectionTitle: {
@@ -285,7 +296,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   eventCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    backgroundColor: '#1f1f1f',
     borderRadius: 16,
     padding: 16,
     marginBottom: 20,
@@ -305,7 +316,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   statusTag: {
-    backgroundColor: '#1e88e5',
+    backgroundColor: '#7e5bef',
     color: '#fff',
     fontSize: 12,
     paddingVertical: 2,
@@ -321,11 +332,13 @@ const styles = StyleSheet.create({
   },
   actionRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     marginTop: 14,
     justifyContent: 'space-around',
+    gap: 8,
   },
   actionButton: {
-    backgroundColor: '#007aff',
+    backgroundColor: '#7e5bef',
     borderRadius: 8,
     paddingVertical: 8,
     paddingHorizontal: 16,
@@ -335,4 +348,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
+  iconButton: {
+    backgroundColor: '#7e5bef',
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
 });
+

@@ -1,17 +1,18 @@
 {
-  "name": "Rahul Sharma",
+  "name": "Virat Kohli",
   "phone": "+91-9876543210",
-  "email": "rahul.wedding@gmail.com",
-  "bride": "sam",
-  "groom": "rahul",
+  "email": "vk@gmail.com",
   "olpId": "001OLP2025",
+  "profile":"https://i.pravatar.cc/150?img=11",
+  "noOfEvents":3,
+  "noOfPhotos":4560,
   "events": [
     {
       "id": "e1",
       "type": "Haldi",
       "date": "2025-07-13",
       "time": "10:00 AM",
-      "location": "Sharma Residence, Jaipur",
+      "location": "Ramada by Wyndham Bengaluru Yelahanka",
       "guests": 75,
       "invoice": {
         "amount": 12000,
@@ -23,27 +24,32 @@
         {
           "id": 1,
           "name": "Steve",
-          "value": "photographer"
+          "value": "photographer",
+          "number":"+91 6301587956"
         },
         {
           "id": 5,
           "name": "Smith",
-          "value": "editor"
+          "value": "editor",
+          "number":"+91 6301587956"
         },
         {
           "id": 9,
           "name": "Ferguson",
-          "value": "lightman"
+          "value": "lightman",
+          "number":"+91 6301587956"
         },
         {
           "id": 13,
           "name": "Archer",
-          "value": "droneoperator"
+          "value": "droneoperator",
+          "number":"+91 6301587956"
         },
         {
           "id": 18,
           "name": "Charlie",
-          "value": "videographer"
+          "value": "videographer",
+          "number":"+91 6301587956"
         }
       ]
     },
@@ -52,7 +58,7 @@
       "type": "Sangeet",
       "date": "2025-07-14",
       "time": "07:00 PM",
-      "location": "Royal Banquet, Jaipur",
+      "location": "ESHANA - The Venue, Chowdeshwarinagara, Bengaluru, Karnataka, India",
       "guests": 120,
       "invoice": {
         "amount": 25000,
@@ -64,22 +70,26 @@
         {
           "id": 1,
           "name": "Steve",
-          "value": "photographer"
+          "value": "photographer",
+          "number":"+91 6301587956"
         },
         {
           "id": 9,
           "name": "Ferguson",
-          "value": "lightman"
+          "value": "lightman",
+          "number":"+91 6301587956"
         },
         {
           "id": 13,
           "name": "Archer",
-          "value": "droneoperator"
+          "value": "droneoperator",
+          "number":"+91 6301587956"
         },
         {
           "id": 18,
           "name": "Charlie",
-          "value": "videographer"
+          "value": "videographer",
+          "number":"+91 6301587956"
         }
       ]
     },
@@ -88,7 +98,7 @@
       "type": "Reception",
       "date": "2025-07-16",
       "time": "08:00 PM",
-      "location": "The Grand Palace, Jaipur",
+      "location": "Wonderla Resort , 28th km, Mysore Road, Bangalore - 562109",
       "guests": 200,
       "invoice": {
         "amount": 30000,
@@ -100,12 +110,14 @@
         {
           "id": 1,
           "name": "Steve",
-          "value": "photographer"
+          "value": "photographer",
+          "number":"+91 6301587956"
         },
         {
           "id": 9,
           "name": "Ferguson",
-          "value": "lightman"
+          "value": "lightman",
+          "number":"+91 6301587956"
         }
       ]
     }

@@ -1,4 +1,3 @@
-// src/components/AnimatedWave.tsx
 import React, { useEffect, useRef } from 'react';
 import { Animated, Dimensions, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
