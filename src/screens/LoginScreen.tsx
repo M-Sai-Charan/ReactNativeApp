@@ -17,25 +17,32 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import Feather from 'react-native-vector-icons/Feather';
 import ConfettiCannon from 'react-native-confetti-cannon';
-import Toast from 'react-native-toast-message';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/RootStackParamList';
 import logoImage from '../assets/olp-logo.png';
 import { useTheme } from '../context/ThemeContext';
 import ParticleBackground from './ParticleBackground';
+import CustomToast from '../components/CustomToast'; // 👈 Add this
 
 const { width } = Dimensions.get('window');
 
 export default function LoginScreen() {
-  const { darkMode, toggleDarkMode, primaryColor, setPrimaryColor } = useTheme();
+  const { darkMode, primaryColor } = useTheme();
   const styles = getStyles(darkMode, primaryColor);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
   const [loading, setLoading] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  // Toast state
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error'>('success');
+
   const slideAnim = useRef(new Animated.Value(80)).current;
   const logoAnim = useRef(new Animated.Value(0)).current;
 
@@ -54,24 +61,23 @@ export default function LoginScreen() {
     ]).start();
   }, []);
 
+  const showToast = (message: string, type: 'success' | 'error') => {
+    setToastMessage(message);
+    setToastType(type);
+    setToastVisible(true);
+  };
+
   const handleLogin = () => {
     if (!email || !password) {
-      Toast.show({
-        type: 'error',
-        text1: 'Missing Fields',
-        text2: 'Please enter both email and password.',
-      });
+      showToast('Please enter both email and password.', 'error');
       return;
     }
+
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
       setShowConfetti(true);
-      Toast.show({
-        type: 'success',
-        text1: 'Login successful!',
-        text2: `Welcome, ${email.split('@')[0]}`,
-      });
+      showToast(`Welcome, ${email.split('@')[0]}`, 'success');
       navigation.replace('MainTabs');
     }, 1200);
   };
@@ -81,12 +87,11 @@ export default function LoginScreen() {
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
           <ParticleBackground />
 
-          {/* Logo Section */}
+          {/* Logo */}
           <Animated.View
             style={[
               styles.logoWrapper,
@@ -107,7 +112,7 @@ export default function LoginScreen() {
             <Text style={styles.logoText}>One Look Photography</Text>
           </Animated.View>
 
-          {/* Login Form */}
+          {/* Form */}
           <Animated.View
             style={[styles.formWrapper, { transform: [{ translateY: slideAnim }] }]}
           >
@@ -169,12 +174,19 @@ export default function LoginScreen() {
             />
           )}
 
-          <Toast position="bottom" />
+          {/* Custom Toast */}
+          <CustomToast
+            visible={toastVisible}
+            message={toastMessage}
+            type={toastType}
+            onHide={() => setToastVisible(false)}
+          />
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 }
+
 const getStyles = (darkMode: boolean, primaryColor: string) =>
   StyleSheet.create({
     container: {
@@ -192,7 +204,6 @@ const getStyles = (darkMode: boolean, primaryColor: string) =>
     logoImage: {
       width: 96,
       height: 96,
-      borderColor: '#333',
     },
     logoText: {
       color: '#fff',
