@@ -27,7 +27,7 @@ const MainTabs = () => {
           right: 16,
           bottom: 0,
           borderRadius: 50,
-          backgroundColor: '#fff',
+          backgroundColor: primaryColor,
           height: 70,
           elevation: 10,
           shadowColor: '#000',
@@ -35,8 +35,8 @@ const MainTabs = () => {
           shadowOffset: { width: 0, height: 6 },
           shadowRadius: 10,
         },
-        tabBarActiveTintColor: primaryColor,
-        tabBarInactiveTintColor: '#aaa',
+        tabBarActiveTintColor: '#fff',
+        tabBarInactiveTintColor: '#000',
         tabBarIcon: ({ focused, color }) => {
           let iconName: string = 'ellipse-outline';
 
