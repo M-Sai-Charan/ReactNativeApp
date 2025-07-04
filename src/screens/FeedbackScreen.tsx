@@ -20,10 +20,13 @@ import Toast from 'react-native-toast-message';
 import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
+import { useTheme } from '../context/ThemeContext';
 
 const { width } = Dimensions.get('window');
 
 const FeedbackScreen = ({ route }: any) => {
+  const { darkMode, toggleDarkMode, primaryColor, setPrimaryColor } = useTheme();
+  const styles = getStyles(darkMode, primaryColor);
   const { eventId } = route.params;
   const navigation = useNavigation();
   const [rating, setRating] = useState(0);
@@ -61,8 +64,7 @@ const FeedbackScreen = ({ route }: any) => {
           <Ionicons
             name={i <= rating ? 'star' : 'star-outline'}
             size={34}
-            color="#ffd700"
-            style={{ marginHorizontal: 6 }}
+            style={{ marginHorizontal: 6, color: primaryColor }}
           />
         </TouchableOpacity>
       ))}
@@ -102,7 +104,7 @@ const FeedbackScreen = ({ route }: any) => {
 
               <TouchableOpacity activeOpacity={0.85} onPress={handleSubmit}>
                 <LinearGradient
-                  colors={['#00c6ff', '#007aff']}
+                  colors={['#000', primaryColor, primaryColor, primaryColor, '#000']}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                   style={styles.submitButton}
@@ -137,96 +139,97 @@ const FeedbackScreen = ({ route }: any) => {
 
 export default FeedbackScreen;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#121212',
-  },
-  header: {
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight ?? 24 : 12,
-    paddingBottom: 12,
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#fff',
-  },
-  cardWrapper: {
-    paddingHorizontal: 20,
-    paddingTop: 10,
-  },
-  blurCard: {
-    borderRadius: 20,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: '#00c6ff60',
-    backgroundColor: 'rgba(30, 30, 30, 0.7)',
-  },
-  eventId: {
-    color: '#aaa',
-    fontSize: 14,
-    marginBottom: 20,
-  },
-  label: {
-    color: '#ccc',
-    fontSize: 16,
-    marginBottom: 8,
-    fontWeight: '500',
-  },
-  starRow: {
-    flexDirection: 'row',
-    marginBottom: 20,
-  },
-  input: {
-    backgroundColor: '#1e1e1e',
-    color: '#fff',
-    borderRadius: 10,
-    padding: 14,
-    minHeight: 100,
-    textAlignVertical: 'top',
-    marginBottom: 24,
-    fontSize: 15,
-  },
-  submitButton: {
-    borderRadius: 12,
-    paddingVertical: 14,
-    alignItems: 'center',
-    shadowColor: '#00c6ff',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 6,
-    elevation: 6,
-  },
-  submitText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 16,
-    letterSpacing: 0.5,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(18,18,18,0.85)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  successBox: {
-    backgroundColor: '#1f1f1f',
-    padding: 30,
-    borderRadius: 20,
-    alignItems: 'center',
-    shadowColor: '#90caf9',
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 10,
-  },
-  successText: {
-    color: '#90caf9',
-    fontSize: 20,
-    fontWeight: '600',
-    marginTop: 12,
-  },
-});
+const getStyles = (darkMode: boolean, primaryColor: string) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#121212',
+    },
+    header: {
+      paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight ?? 24 : 12,
+      paddingBottom: 12,
+      paddingHorizontal: 16,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    headerTitle: {
+      fontSize: 20,
+      fontWeight: '700',
+      color: '#fff',
+    },
+    cardWrapper: {
+      paddingHorizontal: 20,
+      paddingTop: 10,
+    },
+    blurCard: {
+      borderRadius: 20,
+      padding: 20,
+      borderWidth: 1,
+      borderColor: '#00c6ff60',
+      backgroundColor: 'rgba(30, 30, 30, 0.7)',
+    },
+    eventId: {
+      color: '#aaa',
+      fontSize: 14,
+      marginBottom: 20,
+    },
+    label: {
+      color: '#ccc',
+      fontSize: 16,
+      marginBottom: 8,
+      fontWeight: '500',
+    },
+    starRow: {
+      flexDirection: 'row',
+      marginBottom: 20,
+    },
+    input: {
+      backgroundColor: '#1e1e1e',
+      color: '#fff',
+      borderRadius: 10,
+      padding: 14,
+      minHeight: 100,
+      textAlignVertical: 'top',
+      marginBottom: 24,
+      fontSize: 15,
+    },
+    submitButton: {
+      borderRadius: 12,
+      paddingVertical: 14,
+      alignItems: 'center',
+      shadowColor: '#00c6ff',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.4,
+      shadowRadius: 6,
+      elevation: 6,
+    },
+    submitText: {
+      color: '#fff',
+      fontWeight: '600',
+      fontSize: 16,
+      letterSpacing: 0.5,
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(18,18,18,0.85)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    successBox: {
+      backgroundColor: '#1f1f1f',
+      padding: 30,
+      borderRadius: 20,
+      alignItems: 'center',
+      shadowColor: '#90caf9',
+      shadowOpacity: 0.3,
+      shadowRadius: 10,
+      elevation: 10,
+    },
+    successText: {
+      color: '#90caf9',
+      fontSize: 20,
+      fontWeight: '600',
+      marginTop: 12,
+    },
+  });
