@@ -94,7 +94,7 @@ export default function LoginScreen() {
     setTimeout(() => {
       setLoading(false);
       setShowConfetti(true);
-      showToast(`Welcome, ${email.split('@')[0]}`, 'success');
+      showToast(`Welcome, ${validUser.name}`, 'success');
       setTimeout(() => {
         navigation.replace('MainTabs');
       }, 2500);
