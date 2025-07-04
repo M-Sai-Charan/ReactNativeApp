@@ -12,7 +12,7 @@ import Animated, {
 import { View, Text } from 'react-native';
 import ProfileScreen from '../screens/ProfileScreen';
 import { useTheme } from '../context/ThemeContext';
-
+import UploadYourShotsScreen from '../screens/UploadYourShotsScreen';
 const Tab = createBottomTabNavigator();
 
 const MainTabs = () => {
@@ -46,6 +46,8 @@ const MainTabs = () => {
             iconName = focused ? 'images' : 'images-outline';
           } else if (route.name === 'Profile') {
             iconName = focused ? 'person' : 'person-outline';
+          } else if (route.name === 'Upload') {
+            iconName = focused ? 'cloud-upload' : 'cloud-upload-outline';
           }
 
           const scale = useSharedValue(1);
@@ -87,6 +89,7 @@ const MainTabs = () => {
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Gallery" component={GalleryScreen} />
+       <Tab.Screen name="Upload" component={UploadYourShotsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
