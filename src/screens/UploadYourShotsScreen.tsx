@@ -42,6 +42,25 @@ const UploadScreen = () => {
             setImages(limitedImages);
         }
     };
+    const pickFromCamera = async () => {
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
+        if (status !== 'granted') {
+            alert('Camera access is required to take photos.');
+            return;
+        }
+
+        const result = await ImagePicker.launchCameraAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            quality: 1,
+        });
+
+        if (!result.canceled && result.assets.length > 0) {
+            const newImages = [...images, ...result.assets];
+            const limitedImages = newImages.slice(0, 12);
+            setImages(limitedImages);
+        }
+    };
 
     const handleUpload = () => {
         if (!customerName.trim()) {
@@ -81,18 +100,18 @@ const UploadScreen = () => {
                                 {images.length >= 12 ? 'Limit Reached (12)' : '📁 Select Photos'}
                             </Text>
                         </TouchableOpacity>
-
-                        <View style={styles.inputWrapper}>
-                            <Text style={styles.label}>Name</Text>
-                            <TextInput
-                                placeholder="Enter your name"
-                                placeholderTextColor="#888"
-                                value={customerName}
-                                onChangeText={setCustomerName}
-                                style={styles.textInput}
-                            />
-                        </View>
-
+                        <TouchableOpacity
+                            style={[
+                                styles.pickButton,
+                                images.length >= 12 && { opacity: 0.6 },
+                            ]}
+                            onPress={pickFromCamera}
+                            disabled={images.length >= 12}
+                        >
+                            <Text style={styles.pickButtonText}>
+                                {images.length >= 12 ? 'Limit Reached (12)' : '📷 Capture from Camera'}
+                            </Text>
+                        </TouchableOpacity>
                         {images.length > 0 && (
                             <>
                                 <View style={styles.pickerWrapper}>
@@ -112,7 +131,16 @@ const UploadScreen = () => {
                                         </Picker>
                                     </View>
                                 </View>
-
+                                <View style={styles.inputWrapper}>
+                                    <Text style={styles.label}>Name</Text>
+                                    <TextInput
+                                        placeholder="Enter your name"
+                                        placeholderTextColor="#888"
+                                        value={customerName}
+                                        onChangeText={setCustomerName}
+                                        style={styles.textInput}
+                                    />
+                                </View>
                                 <TouchableOpacity
                                     style={[
                                         styles.uploadButton,
