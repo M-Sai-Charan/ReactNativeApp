@@ -43,6 +43,12 @@ export default function LoginScreen() {
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error'>('success');
 
+  const sampleUsers = [
+    { email: 'msunnylive@gmail.com', password: '123', name: 'Sunny' },
+    { email: 'urssunny1804@gmail.com', password: '123', name: 'Charan' },
+  ];
+
+
   const slideAnim = useRef(new Animated.Value(80)).current;
   const logoAnim = useRef(new Animated.Value(0)).current;
 
@@ -68,8 +74,19 @@ export default function LoginScreen() {
   };
 
   const handleLogin = () => {
+    setShowConfetti(false);
+    Keyboard.dismiss();
     if (!email || !password) {
       showToast('Please enter both email and password.', 'error');
+      return;
+    }
+
+    const validUser = sampleUsers.find(
+      (user) => user.email === email && user.password === password
+    );
+
+    if (!validUser) {
+      showToast('Invalid email or password.', 'error');
       return;
     }
 
@@ -78,9 +95,13 @@ export default function LoginScreen() {
       setLoading(false);
       setShowConfetti(true);
       showToast(`Welcome, ${email.split('@')[0]}`, 'success');
-      navigation.replace('MainTabs');
+      setTimeout(() => {
+        navigation.replace('MainTabs');
+      }, 2500);
     }, 1200);
+
   };
+
 
   return (
     <KeyboardAvoidingView
