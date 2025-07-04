@@ -62,9 +62,6 @@ const UploadScreen = () => {
                             />
                         ))}
                     </ScrollView>
-                    <Text style={styles.selectedTag}>
-                        Selected Event Type: <Text style={{ fontWeight: 'bold' }}>{tag}</Text>
-                    </Text>
                     <View style={styles.pickerWrapper}>
                         <Text style={styles.label}>Tag Event:</Text>
                         <View style={styles.pickerBox}>
@@ -161,7 +158,7 @@ const getStyles = (darkMode: boolean, primaryColor: string) =>
             overflow: 'hidden',
         },
         picker: {
-            height: 40,
+            height: 50,
             color: darkMode ? '#fff' : '#000',
         },
         uploadButton: {
@@ -176,12 +173,26 @@ const getStyles = (darkMode: boolean, primaryColor: string) =>
             fontSize: 16,
             fontWeight: '600',
         },
-        selectedTag: {
-            color: darkMode ? '#ccc' : '#333',
-            fontSize: 14,
-            marginBottom: 12,
-            textAlign: 'center',
+        selectedTagText: {
+            alignSelf: 'center',
+            paddingHorizontal: 12,
+            paddingVertical: 6,
+            borderRadius: 20,
+            backgroundColor: darkMode ? '#333' : '#eee',
+            borderWidth: 1,
+            borderColor: primaryColor,
+            fontSize: 13,
             fontWeight: '500',
-            textDecorationLine: 'underline',
-        }
+            color: darkMode ? '#fff' : '#000',
+            marginBottom: 12,
+            overflow: 'hidden',
+            textAlign: 'center',
+        },
+
+        boldTag: {
+            fontWeight: '700',
+            color: primaryColor,
+        },
+
+
     });
