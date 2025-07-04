@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -19,9 +19,9 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/RootStackParamList';
 import { useTheme } from '../context/ThemeContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get('window');
-
 const presetColors = ['#7e5bef', '#ff6b6b', '#00c9a7', '#feca57', '#1dd1a1'];
 
 const ProfileScreen = () => {
@@ -29,7 +29,9 @@ const ProfileScreen = () => {
   const { darkMode, toggleDarkMode, primaryColor, setPrimaryColor } = useTheme();
   const styles = getStyles(darkMode, primaryColor);
 
-  // Entry animation
+  const [biometricLoginEnabled, setBiometricLoginEnabled] = useState(false);
+
+  // Animate profile card on mount
   const translateY = useSharedValue(100);
   const opacity = useSharedValue(0);
 
@@ -37,6 +39,18 @@ const ProfileScreen = () => {
     translateY.value = withTiming(0, { duration: 800, easing: Easing.out(Easing.exp) });
     opacity.value = withTiming(1, { duration: 800 });
   }, []);
+
+  useEffect(() => {
+    AsyncStorage.getItem('biometricEnabled').then(val => {
+      setBiometricLoginEnabled(val === 'false');
+    });
+  }, []);
+
+  const toggleBiometric = async () => {
+    const newValue = !biometricLoginEnabled;
+    setBiometricLoginEnabled(newValue);
+    await AsyncStorage.setItem('biometricEnabled', newValue.toString());
+  };
 
   const profileAnim = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],
@@ -80,7 +94,6 @@ const ProfileScreen = () => {
             />
           </View>
 
-          {/* Color Picker directly below the switch */}
           <View style={styles.colorRow}>
             {presetColors.map((color) => (
               <TouchableOpacity
@@ -97,31 +110,42 @@ const ProfileScreen = () => {
             ))}
           </View>
         </View>
-
       </View>
 
-      {/* Help + Logout */}
+      {/* Biometric Toggle, Help & Logout */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.optionBtn}>
           <Text style={[styles.optionText, { color: primaryColor }]}>🆘 Help</Text>
         </TouchableOpacity>
+
         <TouchableOpacity
           style={styles.optionBtn}
           onPress={() =>
             navigation.reset({
               index: 0,
-              routes: [{ name: 'Login' as keyof RootStackParamList }],
+              routes: [{ name: 'Login' }],
             })
           }
         >
           <Text style={[styles.optionText, { color: primaryColor }]}>🚪 Logout</Text>
         </TouchableOpacity>
+
+        {/* <View style={styles.settingItem}>
+          <Text style={styles.modalText}>🔐 Biometric Login</Text>
+          <Switch
+            value={biometricLoginEnabled}
+            onValueChange={toggleBiometric}
+            trackColor={{ false: '#555', true: primaryColor }}
+            thumbColor={biometricLoginEnabled ? '#fff' : '#ccc'}
+          />
+        </View> */}
       </View>
     </View>
   );
 };
 
 export default ProfileScreen;
+
 
 const getStyles = (darkMode: boolean, primaryColor: string) =>
   StyleSheet.create({
@@ -203,17 +227,19 @@ const getStyles = (darkMode: boolean, primaryColor: string) =>
       width: 30,
       height: 30,
       borderRadius: 15,
+      borderWidth: 2,
     },
     modalText: {
       fontSize: 15,
-      color: darkMode ? '#ccc' : '#444',
+      fontWeight: '700',
+      color: primaryColor,
     },
     buttonContainer: {
       width: width - 40,
       marginTop: 10,
     },
     optionBtn: {
-      backgroundColor: darkMode ? '#1e1e1e' : '#eaeaea',
+      backgroundColor: darkMode ? '#1a1a1a' : '#ffffff',
       padding: 16,
       borderRadius: 12,
       marginBottom: 14,
