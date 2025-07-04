@@ -1,8 +1,14 @@
 // screens/UploadScreen.tsx
 import React, { useState } from 'react';
 import {
-    View, Text, TouchableOpacity, Image, StyleSheet,
-    ScrollView, ActivityIndicator
+    View,
+    Text,
+    TouchableOpacity,
+    Image,
+    StyleSheet,
+    ActivityIndicator,
+    FlatList,
+    TextInput,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useTheme } from '../context/ThemeContext';
@@ -17,104 +23,157 @@ const UploadScreen = () => {
 
     const [images, setImages] = useState<ImagePicker.ImagePickerAsset[]>([]);
     const [tag, setTag] = useState(TAG_OPTIONS[0]);
+    const [customerName, setCustomerName] = useState('');
     const [loading, setLoading] = useState(false);
     const [toastVisible, setToastVisible] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
 
     const pickImages = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
             allowsMultipleSelection: true,
-            mediaTypes: ImagePicker.MediaTypeOptions.All
-            ,
+            mediaTypes: 'images',
+            allowsEditing: true,
             quality: 1,
         });
 
         if (!result.canceled) {
-            setImages(result.assets);
+            const newImages = [...images, ...result.assets];
+            const limitedImages = newImages.slice(0, 12);
+            setImages(limitedImages);
         }
     };
 
     const handleUpload = () => {
+        if (!customerName.trim()) {
+            setToastMessage('Please enter name before uploading.');
+            setToastVisible(true);
+            return;
+        }
+
         setLoading(true);
         setTimeout(() => {
             setLoading(false);
-            setImages([]);
+            setToastMessage(`Upload by ${customerName} successful!`);
             setToastVisible(true);
+            setImages([]);
+            setCustomerName('');
         }, 2000);
     };
 
+
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.title}>Upload Memories</Text>
+        <View style={styles.uploadedScreen}>
+            <FlatList
+                data={images}
+                keyExtractor={(_, index) => index.toString()}
+                numColumns={3}
+                contentContainerStyle={styles.container}
+                ListHeaderComponent={
+                    <>
+                        <Text style={styles.title}>Upload Memories</Text>
 
-            <TouchableOpacity style={styles.pickButton} onPress={pickImages}>
-                <Text style={styles.pickButtonText}>📁 Select Photos/Videos</Text>
-            </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.pickButton, images.length >= 12 && { opacity: 0.6 }]}
+                            onPress={pickImages}
+                            disabled={images.length >= 12}
+                        >
+                            <Text style={styles.pickButtonText}>
+                                {images.length >= 12 ? 'Limit Reached (12)' : '📁 Select Photos'}
+                            </Text>
+                        </TouchableOpacity>
 
-            {images.length > 0 && (
-                <>
-                    <Text style={styles.subTitle}>Selected Media</Text>
-                    <ScrollView horizontal style={styles.previewScroll}>
-                        {images.map((img, index) => (
-                            <Image
-                                key={index}
-                                source={{ uri: img.uri }}
-                                style={styles.previewImage}
+                        <View style={styles.inputWrapper}>
+                            <Text style={styles.label}>Name</Text>
+                            <TextInput
+                                placeholder="Enter your name"
+                                placeholderTextColor="#888"
+                                value={customerName}
+                                onChangeText={setCustomerName}
+                                style={styles.textInput}
                             />
-                        ))}
-                    </ScrollView>
-                    <View style={styles.pickerWrapper}>
-                        <Text style={styles.label}>Tag Event:</Text>
-                        <View style={styles.pickerBox}>
-                            <Picker
-                                selectedValue={tag}
-                                onValueChange={(itemValue) => setTag(itemValue)}
-                                style={styles.picker}
-                                dropdownIconColor={primaryColor}
-                            >
-                                {TAG_OPTIONS.map((t) => (
-                                    <Picker.Item label={t} value={t} key={t} />
-                                ))}
-                            </Picker>
                         </View>
-                    </View>
 
-                    <TouchableOpacity
-                        style={styles.uploadButton}
-                        onPress={handleUpload}
-                        disabled={loading}
-                    >
-                        {loading ? (
-                            <ActivityIndicator color="#fff" />
-                        ) : (
-                            <Text style={styles.uploadButtonText}>🚀 Upload</Text>
+                        {images.length > 0 && (
+                            <>
+                                <View style={styles.pickerWrapper}>
+                                    <Text style={styles.subTitle}>
+                                        Selected Media ({images.length}/12)
+                                    </Text>
+                                    <View style={styles.pickerBox}>
+                                        <Picker
+                                            selectedValue={tag}
+                                            onValueChange={(itemValue) => setTag(itemValue)}
+                                            style={styles.picker}
+                                            dropdownIconColor={primaryColor}
+                                        >
+                                            {TAG_OPTIONS.map((t) => (
+                                                <Picker.Item label={t} value={t} key={t} />
+                                            ))}
+                                        </Picker>
+                                    </View>
+                                </View>
+
+                                <TouchableOpacity
+                                    style={[
+                                        styles.uploadButton,
+                                        (loading || !customerName.trim()) && { opacity: 0.6 },
+                                    ]}
+                                    onPress={handleUpload}
+                                    disabled={loading || !customerName.trim()}
+                                >
+                                    {loading ? (
+                                        <ActivityIndicator color="#fff" />
+                                    ) : (
+                                        <Text style={styles.uploadButtonText}>🚀 Upload</Text>
+                                    )}
+                                </TouchableOpacity>
+
+                            </>
                         )}
-                    </TouchableOpacity>
-                </>
-            )}
-
-            <CustomToast
-                visible={toastVisible}
-                message="Upload successful!"
-                type="success"
-                onHide={() => setToastVisible(false)}
+                    </>
+                }
+                renderItem={({ item, index }) => (
+                    <View style={styles.imageWrapper}>
+                        <TouchableOpacity
+                            style={styles.deleteIcon}
+                            onPress={() => {
+                                const updatedImages = images.filter((_, i) => i !== index);
+                                setImages(updatedImages);
+                            }}
+                        >
+                            <Text style={{ color: 'white', fontSize: 14 }}>✕</Text>
+                        </TouchableOpacity>
+                        <Image source={{ uri: item.uri }} style={styles.previewImage} />
+                    </View>
+                )}
+                ListFooterComponent={
+                    <CustomToast
+                        visible={toastVisible}
+                        message={toastMessage}
+                        type="success"
+                        onHide={() => setToastVisible(false)}
+                    />
+                }
             />
-        </ScrollView>
+        </View>
     );
 };
 
 export default UploadScreen;
 const getStyles = (darkMode: boolean, primaryColor: string) =>
     StyleSheet.create({
-        container: {
-            flexGrow: 1,
-            padding: 20,
+        uploadedScreen: {
             backgroundColor: darkMode ? '#000' : '#f3f3f3',
-            marginBottom: 40,
+            flex: 1,
+        },
+        container: {
+            padding: 35,
+            paddingBottom: 60,
         },
         title: {
             fontSize: 24,
             fontWeight: '700',
-            color: '#fff',
+            color: darkMode ? '#fff' : '#111',
             textAlign: 'center',
             marginBottom: 20,
         },
@@ -130,26 +189,31 @@ const getStyles = (darkMode: boolean, primaryColor: string) =>
             fontWeight: '600',
             fontSize: 16,
         },
-        subTitle: {
-            fontSize: 18,
-            color: darkMode ? '#ccc' : '#333',
-            marginBottom: 10,
-        },
-        previewScroll: {
-            marginBottom: 20,
-        },
-        previewImage: {
-            width: 100,
-            height: 100,
-            borderRadius: 12,
-            marginRight: 10,
-        },
-        pickerWrapper: {
-            marginBottom: 20,
+        inputWrapper: {
+            marginBottom: 16,
         },
         label: {
             color: darkMode ? '#ccc' : '#444',
             marginBottom: 6,
+            fontSize: 14,
+        },
+        textInput: {
+            backgroundColor: darkMode ? '#1a1a1a' : '#fff',
+            color: darkMode ? '#fff' : '#000',
+            borderColor: '#444',
+            borderWidth: 1,
+            borderRadius: 10,
+            paddingHorizontal: 14,
+            paddingVertical: 12,
+        },
+        subTitle: {
+            fontSize: 16,
+            fontWeight: '500',
+            color: darkMode ? '#ccc' : '#333',
+            marginBottom: 10,
+        },
+        pickerWrapper: {
+            marginBottom: 20,
         },
         pickerBox: {
             borderWidth: 1,
@@ -158,7 +222,7 @@ const getStyles = (darkMode: boolean, primaryColor: string) =>
             overflow: 'hidden',
         },
         picker: {
-            height: 50,
+            height: 55,
             color: darkMode ? '#fff' : '#000',
         },
         uploadButton: {
@@ -173,26 +237,28 @@ const getStyles = (darkMode: boolean, primaryColor: string) =>
             fontSize: 16,
             fontWeight: '600',
         },
-        selectedTagText: {
-            alignSelf: 'center',
-            paddingHorizontal: 12,
-            paddingVertical: 6,
-            borderRadius: 20,
-            backgroundColor: darkMode ? '#333' : '#eee',
-            borderWidth: 1,
-            borderColor: primaryColor,
-            fontSize: 13,
-            fontWeight: '500',
-            color: darkMode ? '#fff' : '#000',
-            marginBottom: 12,
+        imageWrapper: {
+            position: 'relative',
+            width: '31.5%',
+            aspectRatio: 1,
+            borderRadius: 10,
             overflow: 'hidden',
-            textAlign: 'center',
+            marginBottom: 12,
+            marginRight: '2%',
         },
-
-        boldTag: {
-            fontWeight: '700',
-            color: primaryColor,
+        previewImage: {
+            width: '100%',
+            height: '100%',
+            borderRadius: 10,
         },
-
-
+        deleteIcon: {
+            position: 'absolute',
+            top: 4,
+            right: 4,
+            backgroundColor: '#0008',
+            paddingHorizontal: 6,
+            paddingVertical: 2,
+            borderRadius: 20,
+            zIndex: 1,
+        },
     });
