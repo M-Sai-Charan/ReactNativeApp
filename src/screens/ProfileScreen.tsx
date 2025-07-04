@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,26 +6,28 @@ import {
   Image,
   Dimensions,
   TouchableOpacity,
-  Modal,
+  Switch,
 } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
   Easing,
-  runOnJS,
 } from 'react-native-reanimated';
 import ParticleBackground from './ParticleBackground';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/RootStackParamList';
+import { useTheme } from '../context/ThemeContext';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
+
+const presetColors = ['#7e5bef', '#ff6b6b', '#00c9a7', '#feca57', '#1dd1a1'];
 
 const ProfileScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const [helpVisible, setHelpVisible] = useState(false);
-  const [settingsVisible, setSettingsVisible] = useState(false);
+  const { darkMode, toggleDarkMode, primaryColor, setPrimaryColor } = useTheme();
+  const styles = getStyles(darkMode, primaryColor);
 
   // Entry animation
   const translateY = useSharedValue(100);
@@ -41,50 +43,6 @@ const ProfileScreen = () => {
     opacity: opacity.value,
   }));
 
-  // Help modal animation
-  const scale = useSharedValue(0.8);
-  const modalOpacity = useSharedValue(0);
-
-  const helpModalAnim = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-    opacity: modalOpacity.value,
-  }));
-
-  const openHelp = () => {
-    setHelpVisible(true);
-    scale.value = withTiming(1, { duration: 300, easing: Easing.out(Easing.exp) });
-    modalOpacity.value = withTiming(1, { duration: 300 });
-  };
-
-  const closeHelp = () => {
-    scale.value = withTiming(0.8, { duration: 200 });
-    modalOpacity.value = withTiming(0, { duration: 200 }, () => {
-      runOnJS(setHelpVisible)(false);
-    });
-  };
-
-  // App Settings modal animation
-  const settingsScale = useSharedValue(0.8);
-  const settingsOpacity = useSharedValue(0);
-
-  const settingsModalAnim = useAnimatedStyle(() => ({
-    transform: [{ scale: settingsScale.value }],
-    opacity: settingsOpacity.value,
-  }));
-
-  const openSettings = () => {
-    setSettingsVisible(true);
-    settingsScale.value = withTiming(1, { duration: 300, easing: Easing.out(Easing.exp) });
-    settingsOpacity.value = withTiming(1, { duration: 300 });
-  };
-
-  const closeSettings = () => {
-    settingsScale.value = withTiming(0.8, { duration: 200 });
-    settingsOpacity.value = withTiming(0, { duration: 200 }, () => {
-      runOnJS(setSettingsVisible)(false);
-    });
-  };
-
   return (
     <View style={styles.container}>
       <ParticleBackground />
@@ -92,33 +50,61 @@ const ProfileScreen = () => {
       <Animated.View style={[styles.profileCard, profileAnim]}>
         <Image
           source={{ uri: 'https://i.pravatar.cc/150?img=11' }}
-          style={styles.avatar}
+          style={[styles.avatar, { borderColor: primaryColor }]}
         />
         <Text style={styles.name}>Sai Charan</Text>
         <Text style={styles.email}>charan@example.com</Text>
 
         <View style={styles.statsContainer}>
           <View style={styles.statBox}>
-            <Text style={styles.statValue}>42</Text>
+            <Text style={[styles.statValue, { color: primaryColor }]}>42</Text>
             <Text style={styles.statLabel}>Events</Text>
           </View>
           <View style={styles.statBox}>
-            <Text style={styles.statValue}>3589</Text>
+            <Text style={[styles.statValue, { color: primaryColor }]}>3589</Text>
             <Text style={styles.statLabel}>Photos</Text>
           </View>
         </View>
       </Animated.View>
 
-      {/* Option Buttons */}
+      {/* Settings Section */}
+      <View style={styles.settingsCard}>
+        <View style={{ marginBottom: 20 }}>
+          <View style={styles.settingItem}>
+            <Text style={styles.modalText}>🌙 Dark Mode</Text>
+            <Switch
+              value={darkMode}
+              onValueChange={toggleDarkMode}
+              trackColor={{ false: '#555', true: primaryColor }}
+              thumbColor={darkMode ? '#fff' : '#ccc'}
+            />
+          </View>
+
+          {/* Color Picker directly below the switch */}
+          <View style={styles.colorRow}>
+            {presetColors.map((color) => (
+              <TouchableOpacity
+                key={color}
+                style={[
+                  styles.colorOption,
+                  {
+                    backgroundColor: color,
+                    borderColor: color === primaryColor ? '#000' : '#fff',
+                  },
+                ]}
+                onPress={() => setPrimaryColor(color)}
+              />
+            ))}
+          </View>
+        </View>
+
+      </View>
+
+      {/* Help + Logout */}
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.optionBtn} onPress={openSettings}>
-          <Text style={styles.optionText}>⚙️ App Settings</Text>
+        <TouchableOpacity style={styles.optionBtn}>
+          <Text style={[styles.optionText, { color: primaryColor }]}>🆘 Help</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity style={styles.optionBtn} onPress={openHelp}>
-          <Text style={styles.optionText}>🆘 Help</Text>
-        </TouchableOpacity>
-
         <TouchableOpacity
           style={styles.optionBtn}
           onPress={() =>
@@ -128,168 +114,112 @@ const ProfileScreen = () => {
             })
           }
         >
-          <Text style={styles.optionText}>🚪 Logout</Text>
+          <Text style={[styles.optionText, { color: primaryColor }]}>🚪 Logout</Text>
         </TouchableOpacity>
       </View>
-
-      {/* Help Modal */}
-      {helpVisible && (
-        <Modal transparent animationType="none" visible={helpVisible}>
-          <View style={styles.modalOverlay}>
-            <Animated.View style={[styles.helpModal, helpModalAnim]}>
-              <Text style={styles.modalTitle}>Help & Support</Text>
-              <Text style={styles.modalText}>📧 support@onelookphotography.com</Text>
-              <Text style={styles.modalText}>📞 +91 98765 43210</Text>
-
-              <TouchableOpacity style={styles.modalCloseBtn} onPress={closeHelp}>
-                <Text style={styles.modalCloseText}>Close</Text>
-              </TouchableOpacity>
-            </Animated.View>
-          </View>
-        </Modal>
-      )}
-
-      {/* App Settings Modal */}
-      {settingsVisible && (
-        <Modal transparent animationType="none" visible={settingsVisible}>
-          <View style={styles.modalOverlay}>
-            <Animated.View style={[styles.helpModal, settingsModalAnim]}>
-              <Text style={styles.modalTitle}>App Settings</Text>
-
-              <View style={styles.settingItem}>
-                <Text style={styles.modalText}>🌙 Dark Mode</Text>
-                <Text style={styles.modalText}>On</Text>
-              </View>
-
-              <View style={styles.settingItem}>
-                <Text style={styles.modalText}>🔔 Notifications</Text>
-                <Text style={styles.modalText}>Enabled</Text>
-              </View>
-
-              <View style={styles.settingItem}>
-                <Text style={styles.modalText}>🌐 Language</Text>
-                <Text style={styles.modalText}>English</Text>
-              </View>
-
-              <TouchableOpacity style={styles.modalCloseBtn} onPress={closeSettings}>
-                <Text style={styles.modalCloseText}>Close</Text>
-              </TouchableOpacity>
-            </Animated.View>
-          </View>
-        </Modal>
-      )}
     </View>
   );
 };
 
 export default ProfileScreen;
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0d0d0d',
-    paddingTop: 60,
-    alignItems: 'center',
-  },
-  profileCard: {
-    backgroundColor: '#1f1f1f',
-    borderRadius: 20,
-    padding: 24,
-    alignItems: 'center',
-    width: width - 40,
-    elevation: 10,
-    marginBottom: 30,
-  },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    borderColor: '#007aff',
-    borderWidth: 2,
-    marginBottom: 12,
-  },
-  name: {
-    color: '#fff',
-    fontSize: 22,
-    fontWeight: '700',
-  },
-  email: {
-    color: '#aaa',
-    fontSize: 14,
-    marginBottom: 20,
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-  },
-  statBox: {
-    alignItems: 'center',
-  },
-  statValue: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#00d4ff',
-  },
-  statLabel: {
-    color: '#888',
-    fontSize: 13,
-  },
-  buttonContainer: {
-    width: width - 40,
-    marginTop: 10,
-  },
-  optionBtn: {
-    backgroundColor: '#1e1e1e',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 14,
-  },
-  optionText: {
-    color: '#00d4ff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  helpModal: {
-    width: width - 60,
-    backgroundColor: '#1a1a1a',
-    padding: 24,
-    borderRadius: 20,
-    alignItems: 'center',
-  },
-  modalTitle: {
-    fontSize: 20,
-    color: '#fff',
-    fontWeight: '700',
-    marginBottom: 12,
-  },
-  modalText: {
-    color: '#ccc',
-    fontSize: 15,
-    marginVertical: 4,
-    textAlign: 'center',
-  },
-  modalCloseBtn: {
-    marginTop: 20,
-    backgroundColor: '#7e5bef',
-    paddingHorizontal: 24,
-    paddingVertical: 10,
-    borderRadius: 10,
-  },
-  modalCloseText: {
-    color: '#000',
-    fontWeight: '700',
-    fontSize: 16,
-  },
-  settingItem: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 8,
-  },
-});
+
+const getStyles = (darkMode: boolean, primaryColor: string) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: darkMode ? '#0d0d0d' : '#f3f3f3',
+      paddingTop: 60,
+      alignItems: 'center',
+    },
+    profileCard: {
+      backgroundColor: darkMode ? '#1f1f1f' : '#ffffff',
+      borderRadius: 20,
+      padding: 24,
+      alignItems: 'center',
+      width: width - 40,
+      elevation: 10,
+      marginBottom: 20,
+    },
+    avatar: {
+      width: 100,
+      height: 100,
+      borderRadius: 50,
+      borderWidth: 2,
+      marginBottom: 12,
+    },
+    name: {
+      color: darkMode ? '#fff' : '#222',
+      fontSize: 22,
+      fontWeight: '700',
+    },
+    email: {
+      color: darkMode ? '#aaa' : '#555',
+      fontSize: 14,
+      marginBottom: 20,
+    },
+    statsContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      width: '100%',
+    },
+    statBox: {
+      alignItems: 'center',
+    },
+    statValue: {
+      fontSize: 20,
+      fontWeight: '700',
+    },
+    statLabel: {
+      color: darkMode ? '#888' : '#666',
+      fontSize: 13,
+    },
+    settingsCard: {
+      backgroundColor: darkMode ? '#1a1a1a' : '#ffffff',
+      width: width - 40,
+      borderRadius: 16,
+      padding: 20,
+      marginBottom: 20,
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: '700',
+      color: darkMode ? '#fff' : '#222',
+      marginBottom: 12,
+    },
+    settingItem: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginVertical: 8,
+    },
+    colorRow: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      flexWrap: 'wrap',
+      marginTop: 10,
+      gap: 8,
+    },
+    colorOption: {
+      width: 30,
+      height: 30,
+      borderRadius: 15,
+    },
+    modalText: {
+      fontSize: 15,
+      color: darkMode ? '#ccc' : '#444',
+    },
+    buttonContainer: {
+      width: width - 40,
+      marginTop: 10,
+    },
+    optionBtn: {
+      backgroundColor: darkMode ? '#1e1e1e' : '#eaeaea',
+      padding: 16,
+      borderRadius: 12,
+      marginBottom: 14,
+    },
+    optionText: {
+      fontSize: 16,
+      fontWeight: '600',
+    },
+  });

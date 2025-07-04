@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTheme } from '../context/ThemeContext';
 import {
   View,
   Text,
@@ -16,6 +17,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 const { width } = Dimensions.get('window');
 
 const GalleryScreen = () => {
+  const { darkMode, toggleDarkMode, primaryColor, setPrimaryColor } = useTheme();
+  const styles = getStyles(darkMode, primaryColor);
   const [selectedFilter, setSelectedFilter] = useState<string>('All');
   const [modalVisible, setModalVisible] = useState(false);
   const [modalImages, setModalImages] = useState<string[]>([]);
@@ -134,114 +137,117 @@ const GalleryScreen = () => {
 
 export default GalleryScreen;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#121212',
-    paddingTop: 58,
-    paddingHorizontal: 16,
-  },
-  title: {
-    color: '#fff',
-    fontSize: 22,
-    fontWeight: '700',
-    marginBottom: 16,
-  },
-  filterRow: {
-    flexDirection: 'row',
-    paddingBottom: 12,
-  },
-  filterButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
-    backgroundColor: '#2a2a2a',
-    marginRight: 10,
-    minWidth: 80,
-    alignItems: 'center',
-    height:40
-  },
-  filterButtonActive: {
-    backgroundColor: '#7e5bef',
-  },
-  filterText: {
-    color: '#bbb',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  filterTextActive: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  eventCard: {
-    backgroundColor: '#1e1e1e',
-    borderRadius: 16,
-    padding: 10,
-    marginBottom: 20,
-  },
-  eventHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 10,
-  },
-  eventTitle: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  viewAll: {
-    color: '#90caf9',
-    fontSize: 14,
-  },
-  imageWrapper: {
-    flex: 1,
-    margin: 6,
-  },
-  gridImage: {
-    width: (width - 70) / 2,
-    height: 140,
-    borderRadius: 12,
-  },
-  modalWrapper: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.95)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    backgroundColor: '#1a1a1a',
-    height: '92%',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    padding: 16,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  modalTitle: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  modalGrid: {
-    paddingBottom: 40,
-  },
-  fullImageWrapper: {
-    flex: 1,
-    backgroundColor: '#000',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  fullImage: {
-    width: width,
-    height: '90%',
-    resizeMode: 'contain',
-  },
-  closeBtn: {
-    position: 'absolute',
-    top: 40,
-    right: 20,
-  },
-});
+const getStyles = (darkMode: boolean, primaryColor: string) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#121212',
+      paddingTop: 58,
+      paddingHorizontal: 16,
+    },
+    title: {
+      color: '#fff',
+      fontSize: 22,
+      fontWeight: '700',
+      marginBottom: 16,
+    },
+    filterRow: {
+      flexDirection: 'row',
+      paddingBottom: 12,
+    },
+    filterButton: {
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      borderRadius: 20,
+      backgroundColor: '#2a2a2a',
+      marginRight: 10,
+      minWidth: 80,
+      alignItems: 'center',
+      height: 40
+    },
+    filterButtonActive: {
+      backgroundColor: primaryColor,
+    },
+    filterText: {
+      color: primaryColor,
+      fontSize: 14,
+      fontWeight: '500',
+    },
+    filterTextActive: {
+      color: '#fff',
+      fontWeight: '600',
+    },
+    eventCard: {
+      backgroundColor: '#1e1e1e',
+      borderRadius: 16,
+      padding: 10,
+      marginBottom: 20,
+    },
+    eventHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 10,
+    },
+    eventTitle: {
+      color: primaryColor,
+      fontSize: 18,
+      fontWeight: '600',
+    },
+    viewAll: {
+      color: '#90caf9',
+      fontSize: 14,
+    },
+    imageWrapper: {
+      flex: 1,
+      margin: 6,
+    },
+    gridImage: {
+      width: (width - 70) / 2,
+      height: 140,
+      borderRadius: 12,
+    },
+    modalWrapper: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.95)',
+      justifyContent: 'flex-end',
+    },
+    modalContent: {
+      backgroundColor: '#1a1a1a',
+      height: '92%',
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      padding: 16,
+    },
+    modalHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 12,
+    },
+    modalTitle: {
+      color: primaryColor,
+      fontSize: 18,
+      fontWeight: '600',
+    },
+    modalGrid: {
+      paddingBottom: 40,
+    },
+    fullImageWrapper: {
+      flex: 1,
+      backgroundColor: '#000',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    fullImage: {
+      width: width,
+      height: '90%',
+      resizeMode: 'contain',
+    },
+    closeBtn: {
+      position: 'absolute',
+      top: 40,
+      right: 20,
+    },
+  });
+
+

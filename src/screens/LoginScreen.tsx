@@ -22,10 +22,14 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/RootStackParamList';
 import logoImage from '../assets/olp-logo.png';
+import { useTheme } from '../context/ThemeContext';
+import ParticleBackground from './ParticleBackground';
 
 const { width } = Dimensions.get('window');
 
 export default function LoginScreen() {
+  const { darkMode, toggleDarkMode, primaryColor, setPrimaryColor } = useTheme();
+  const styles = getStyles(darkMode, primaryColor);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [loading, setLoading] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -68,7 +72,7 @@ export default function LoginScreen() {
         text1: 'Login successful!',
         text2: `Welcome, ${email.split('@')[0]}`,
       });
-     navigation.replace('MainTabs');
+      navigation.replace('MainTabs');
     }, 1200);
   };
 
@@ -77,8 +81,11 @@ export default function LoginScreen() {
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
+
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
+          <ParticleBackground />
+
           {/* Logo Section */}
           <Animated.View
             style={[
@@ -168,77 +175,77 @@ export default function LoginScreen() {
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-  },
-  logoWrapper: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-  },
-  logoImage: {
-    width: 96,
-    height: 96,
-    borderColor: '#333',
-  },
-  logoText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 18,
-    letterSpacing: 1,
-    marginTop: 10,
-    textAlign: 'center',
-  },
-  formWrapper: {
-    width: '100%',
-    maxWidth: 380,
-    backgroundColor: '#111',
-    borderColor: '#333',
-    borderWidth: 1,
-    borderRadius: 24,
-    padding: 20,
-  },
-  input: {
-    backgroundColor: '#1a1a1a',
-    color: '#fff',
-    borderColor: '#333',
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    marginBottom: 16,
-  },
-  loginButton: {
-    backgroundColor: '#7e5bef',
-    borderRadius: 12,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  loginButtonText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 16,
-  },
-  helpText: {
-    color: '#ccc',
-    textAlign: 'center',
-    textDecorationLine: 'underline',
-    fontSize: 13,
-    marginTop: 4,
-    opacity: 0.8,
-  },
-  eyeIconOverlay: {
-    position: 'absolute',
-    right: 10,
-    top: '38%',
-    transform: [{ translateY: -10 }],
-    zIndex: 1,
-  },
-});
+const getStyles = (darkMode: boolean, primaryColor: string) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#000',
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: 16,
+    },
+    logoWrapper: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 20,
+    },
+    logoImage: {
+      width: 96,
+      height: 96,
+      borderColor: '#333',
+    },
+    logoText: {
+      color: '#fff',
+      fontWeight: 'bold',
+      fontSize: 18,
+      letterSpacing: 1,
+      marginTop: 10,
+      textAlign: 'center',
+    },
+    formWrapper: {
+      width: '100%',
+      maxWidth: 380,
+      backgroundColor: '#111',
+      borderColor: '#333',
+      borderWidth: 1,
+      borderRadius: 24,
+      padding: 20,
+    },
+    input: {
+      backgroundColor: '#1a1a1a',
+      color: '#fff',
+      borderColor: '#333',
+      borderWidth: 1,
+      borderRadius: 12,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      marginBottom: 16,
+    },
+    loginButton: {
+      backgroundColor: primaryColor,
+      borderRadius: 12,
+      paddingVertical: 14,
+      alignItems: 'center',
+      marginBottom: 12,
+    },
+    loginButtonText: {
+      color: '#fff',
+      fontWeight: '600',
+      fontSize: 16,
+    },
+    helpText: {
+      color: '#ccc',
+      textAlign: 'center',
+      textDecorationLine: 'underline',
+      fontSize: 13,
+      marginTop: 4,
+      opacity: 0.8,
+    },
+    eyeIconOverlay: {
+      position: 'absolute',
+      right: 10,
+      top: '38%',
+      transform: [{ translateY: -10 }],
+      zIndex: 1,
+    },
+  });

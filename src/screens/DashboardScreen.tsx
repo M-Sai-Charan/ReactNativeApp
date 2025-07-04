@@ -12,10 +12,12 @@ import moment from 'moment';
 import { Swipeable } from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
 import Reanimated, { FadeInDown } from 'react-native-reanimated';
-
+import { useTheme } from '../context/ThemeContext';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const DashboardScreen = () => {
+  const { darkMode, toggleDarkMode, primaryColor, setPrimaryColor } = useTheme();
+  const styles = getStyles(darkMode, primaryColor);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [customer, setCustomer] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -166,183 +168,183 @@ const DashboardScreen = () => {
 
 export default DashboardScreen;
 
-
-const styles = StyleSheet.create({
-  gradient: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
-  loaderContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#0d0d0d',
-  },
-  welcomeSection: {
-    marginTop: 45,
-    marginBottom: 20,
-  },
-  profileRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-  },
-  avatar: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    backgroundColor: '#444',
-  },
-  welcomeHeading: {
-    fontSize: 16,
-    color: '#aaa',
-  },
-  customerName: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#fff',
-  },
-  welcomeSub: {
-    marginTop: 10,
-    fontSize: 14,
-    color: '#bbb',
-  },
-  topRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  bellContainer: {
-    position: 'relative',
-    padding: 4,
-  },
-  badgeDot: {
-    position: 'absolute',
-    top: 2,
-    right: 2,
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#ff3d00',
-  },
-  eventCard: {
-    backgroundColor: '#111111',
-    borderRadius: 20,
-    padding: 18,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(126, 91, 239, 0.3)',
-    shadowColor: '#7e5bef',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
-    elevation: 10,
-  },
-  eventHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 6,
-  },
-  eventType: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#fff',
-  },
-  countdown: {
-    fontSize: 13,
-    color: '#00e676',
-    fontWeight: '600',
-    textShadowColor: 'rgba(0, 230, 118, 0.3)',
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 6,
-  },
-  statusTag: {
-    backgroundColor: '#7e5bef',
-    color: '#fff',
-    fontSize: 12,
-    paddingVertical: 2,
-    paddingHorizontal: 10,
-    borderRadius: 12,
-    fontWeight: '600',
-    overflow: 'hidden',
-  },
-  eventText: {
-    fontSize: 14,
-    color: '#ccc',
-    marginTop: 4,
-  },
-  actionRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 14,
-    justifyContent: 'space-between',
-  },
-  iconButton: {
-    backgroundColor: '#7e5bef',
-    padding: 10,
-    borderRadius: 12,
-    marginTop: 8,
-    shadowColor: '#7e5bef',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.6,
-    shadowRadius: 6,
-  },
-  modalOverlay: {
-    position: 'absolute',
-    top: 80,
-    left: 20,
-    right: 20,
-    backgroundColor: '#000',
-    borderRadius: 16,
-    padding: 20,
-    zIndex: 1000,
-  },
-  modalContent: {
-    gap: 10,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 10,
-  },
-  modalText: {
-    color: '#ccc',
-    fontSize: 14,
-  },
-  closeButton: {
-    marginTop: 12,
-    alignSelf: 'flex-end',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    backgroundColor: '#7e5bef',
-    borderRadius: 8,
-  },
-  closeText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  dismissAction: {
-    backgroundColor: '#ff5252',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 80,
-    borderRadius: 8,
-    marginVertical: 4,
-  },
-  dismissText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  notificationCard: {
-    backgroundColor: '#2a2a2a',
-    padding: 10,
-    borderRadius: 10,
-    marginVertical: 4,
-  },
-});
+const getStyles = (darkMode: boolean, primaryColor: string) =>
+  StyleSheet.create({
+    gradient: {
+      flex: 1,
+    },
+    container: {
+      flex: 1,
+      paddingHorizontal: 16,
+    },
+    loaderContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#0d0d0d',
+    },
+    welcomeSection: {
+      marginTop: 45,
+      marginBottom: 20,
+    },
+    profileRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 14,
+    },
+    avatar: {
+      width: 54,
+      height: 54,
+      borderRadius: 27,
+      backgroundColor: '#444',
+    },
+    welcomeHeading: {
+      fontSize: 16,
+      color: '#aaa',
+    },
+    customerName: {
+      fontSize: 24,
+      fontWeight: '700',
+      color: primaryColor,
+    },
+    welcomeSub: {
+      marginTop: 10,
+      fontSize: 14,
+      color: '#bbb',
+    },
+    topRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    bellContainer: {
+      position: 'relative',
+      padding: 4,
+    },
+    badgeDot: {
+      position: 'absolute',
+      top: 2,
+      right: 2,
+      width: 10,
+      height: 10,
+      borderRadius: 5,
+      backgroundColor: '#ff3d00',
+    },
+    eventCard: {
+      backgroundColor: '#111111',
+      borderRadius: 20,
+      padding: 18,
+      marginBottom: 20,
+      borderWidth: 1,
+      borderColor: 'rgba(126, 91, 239, 0.3)',
+      shadowColor: '#7e5bef',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.4,
+      shadowRadius: 10,
+      elevation: 10,
+    },
+    eventHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 6,
+    },
+    eventType: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: primaryColor,
+    },
+    countdown: {
+      fontSize: 13,
+      color: '#00e676',
+      fontWeight: '600',
+      textShadowColor: 'rgba(0, 230, 118, 0.3)',
+      textShadowOffset: { width: 0, height: 0 },
+      textShadowRadius: 6,
+    },
+    statusTag: {
+      backgroundColor: primaryColor,
+      color: '#fff',
+      fontSize: 12,
+      paddingVertical: 2,
+      paddingHorizontal: 10,
+      borderRadius: 12,
+      fontWeight: '600',
+      overflow: 'hidden',
+    },
+    eventText: {
+      fontSize: 14,
+      color: '#ccc',
+      marginTop: 4,
+    },
+    actionRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginTop: 14,
+      justifyContent: 'space-between',
+    },
+    iconButton: {
+      backgroundColor: primaryColor,
+      padding: 10,
+      borderRadius: 12,
+      marginTop: 8,
+      shadowColor: '#7e5bef',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.6,
+      shadowRadius: 6,
+    },
+    modalOverlay: {
+      position: 'absolute',
+      top: 80,
+      left: 20,
+      right: 20,
+      backgroundColor: '#000',
+      borderRadius: 16,
+      padding: 20,
+      zIndex: 1000,
+    },
+    modalContent: {
+      gap: 10,
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: '#fff',
+      marginBottom: 10,
+    },
+    modalText: {
+      color: '#ccc',
+      fontSize: 14,
+    },
+    closeButton: {
+      marginTop: 12,
+      alignSelf: 'flex-end',
+      paddingVertical: 6,
+      paddingHorizontal: 12,
+      backgroundColor: primaryColor,
+      borderRadius: 8,
+    },
+    closeText: {
+      color: '#fff',
+      fontWeight: '600',
+    },
+    dismissAction: {
+      backgroundColor: '#ff5252',
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: 80,
+      borderRadius: 8,
+      marginVertical: 4,
+    },
+    dismissText: {
+      color: '#fff',
+      fontWeight: 'bold',
+    },
+    notificationCard: {
+      backgroundColor: '#2a2a2a',
+      padding: 10,
+      borderRadius: 10,
+      marginVertical: 4,
+    },
+  });
 

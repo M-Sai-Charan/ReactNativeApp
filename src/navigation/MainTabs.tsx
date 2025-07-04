@@ -11,10 +11,12 @@ import Animated, {
 } from 'react-native-reanimated';
 import { View, Text } from 'react-native';
 import ProfileScreen from '../screens/ProfileScreen';
+import { useTheme } from '../context/ThemeContext';
 
 const Tab = createBottomTabNavigator();
 
 const MainTabs = () => {
+  const { primaryColor } = useTheme();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -33,7 +35,7 @@ const MainTabs = () => {
           shadowOffset: { width: 0, height: 6 },
           shadowRadius: 10,
         },
-        tabBarActiveTintColor: '#7e5bef',
+        tabBarActiveTintColor: primaryColor,
         tabBarInactiveTintColor: '#aaa',
         tabBarIcon: ({ focused, color }) => {
           let iconName: string = 'ellipse-outline';
