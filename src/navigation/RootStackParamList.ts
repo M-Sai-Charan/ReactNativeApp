@@ -18,4 +18,5 @@ export type RootStackParamList = {
   Gallery:undefined;
   LivePhotoBooth: undefined;
   Profile:undefined;
+  ClientScreen: undefined;
 };

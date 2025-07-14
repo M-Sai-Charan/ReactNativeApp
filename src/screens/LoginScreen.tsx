@@ -51,8 +51,8 @@ export default function LoginScreen() {
   const [biometricAvailable, setBiometricAvailable] = useState(false);
 
   const sampleUsers = [
-    { email: 'msunnylive@gmail.com', password: '123', name: 'Sunny' },
-    { email: 'urssunny1804@gmail.com', password: '123', name: 'Charan' },
+    { email: 'msunnylive@gmail.com', password: '123', name: 'Sunny', admin: true },
+    { email: 'urssunny1804@gmail.com', password: '123', name: 'Charan', admin: false },
   ];
 
   const slideAnim = useRef(new Animated.Value(80)).current;
@@ -74,47 +74,47 @@ export default function LoginScreen() {
   }, []);
 
   useEffect(() => {
-   const checkStoredLogin = async () => {
-  try {
-    const stored = await AsyncStorage.getItem('rememberedUser');
-    const biometricPref = await AsyncStorage.getItem('biometricEnabled');
-    const isBiometricEnabled = biometricPref === 'true';
+    const checkStoredLogin = async () => {
+      try {
+        const stored = await AsyncStorage.getItem('rememberedUser');
+        const biometricPref = await AsyncStorage.getItem('biometricEnabled');
+        const isBiometricEnabled = biometricPref === 'true';
 
-    const compatible = await LocalAuthentication.hasHardwareAsync();
-    const enrolled = await LocalAuthentication.isEnrolledAsync();
-    const biometricAvailableNow = compatible && enrolled;
-    setBiometricAvailable(biometricAvailableNow);
+        const compatible = await LocalAuthentication.hasHardwareAsync();
+        const enrolled = await LocalAuthentication.isEnrolledAsync();
+        const biometricAvailableNow = compatible && enrolled;
+        setBiometricAvailable(biometricAvailableNow);
 
-    if (stored) {
-      const creds = JSON.parse(stored);
-      const matched = sampleUsers.find(u => u.email === creds.email);
-      if (matched) {
-        const userWithName = { ...creds, name: matched.name };
-        setStoredUser(userWithName);
-        setEmail(creds.email);
-        setPassword(creds.password);
-        setRememberMe(true);
+        if (stored) {
+          const creds = JSON.parse(stored);
+          const matched = sampleUsers.find(u => u.email === creds.email);
+          if (matched) {
+            const userWithName = { ...creds, name: matched.name };
+            setStoredUser(userWithName);
+            setEmail(creds.email);
+            setPassword(creds.password);
+            setRememberMe(true);
 
-        if (biometricAvailableNow && isBiometricEnabled) {
-          const result = await LocalAuthentication.authenticateAsync({
-            promptMessage: 'Login with Face ID / Fingerprint',
-            fallbackLabel: 'Enter password',
-          });
+            if (biometricAvailableNow && isBiometricEnabled) {
+              const result = await LocalAuthentication.authenticateAsync({
+                promptMessage: 'Login with Face ID / Fingerprint',
+                fallbackLabel: 'Enter password',
+              });
 
-          if (result.success) {
-            handleLogin(creds.email, creds.password, true);
-          } else {
-            showToast('Biometric authentication failed.', 'error');
+              if (result.success) {
+                handleLogin(creds.email, creds.password, true);
+              } else {
+                showToast('Biometric authentication failed.', 'error');
+              }
+            } else {
+              setPromptAutoLogin(true);
+            }
           }
-        } else {
-          setPromptAutoLogin(true);
         }
+      } catch (e) {
+        console.error('Error in auto-login logic:', e);
       }
-    }
-  } catch (e) {
-    console.error('Error in auto-login logic:', e);
-  }
-};
+    };
 
 
     const checkBiometrics = async () => {
@@ -162,7 +162,7 @@ export default function LoginScreen() {
       if (rememberMe && !isAutoLogin) {
         await AsyncStorage.setItem(
           'rememberedUser',
-          JSON.stringify({ email: emailToCheck, password: passToCheck, name: validUser.name })
+          JSON.stringify({ email: emailToCheck, password: passToCheck, name: validUser.name, admin: validUser.admin })
         );
       }
 

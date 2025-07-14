@@ -8,7 +8,7 @@ import InvoiceScreen from '../screens/InvoiceScreen';
 import FeedbackScreen from '../screens/FeedbackScreen';
 import MainTabs from './MainTabs';
 import { RootStackParamList } from './RootStackParamList';
-
+import ClientScreen from '../screens/ClientScreen';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function AppNavigator() {
@@ -20,6 +20,11 @@ export default function AppNavigator() {
         <Stack.Screen name="Team" component={TeamScreen} />
         <Stack.Screen name="Invoice" component={InvoiceScreen} />
         <Stack.Screen name="Feedback" component={FeedbackScreen} />
+        <Stack.Screen
+          name="ClientScreen"
+          component={ClientScreen}
+          options={{ headerShown: true, title: 'Client Enquiries' }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
